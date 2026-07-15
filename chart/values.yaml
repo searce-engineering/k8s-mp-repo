@@ -1,0 +1,12 @@
+name: poc-app
+namespace: default
+
+image:
+  repository: gcr.io/searce-cloud-products/mp-poc-k8s/poc-app
+  tag: "1.0.0"
+
+userInput: "default-value"
+
+service:
+  port: 80
+  type: ClusterIP
