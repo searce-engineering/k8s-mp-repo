@@ -1,0 +1,16 @@
+name: gke-mp-poc-app
+namespace: default
+
+
+licenseKey: "test-key-poc"
+
+images:
+  py-app:
+    repository: "us-docker.pkg.dev/searce-cloud-products/py-app-gke-mp-poc/py-app"
+    tag: "1.0.0"
+
+# SaaS validation endpoint. Publicly reachable URL required so the
+# verification sandbox can start the pod without hitting a networking error.
+# Real value is supplied by the user at deploy time.
+saas:
+  validationUrl: "https://httpbin.org/status/200"

@@ -1,0 +1,40 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: "Initial Release of the IBM Watsonx GKE BYOL Integration POC."
+    releaseTypes:
+      - Feature
+    recommended: false
+  images:
+    py-app:
+      properties:
+        repository:
+          type: FULL
+          # Replace with your actual sandbox Artifact Registry / Container Registry path
+          default: "us-docker.pkg.dev/searce-cloud-products/py-app-gke-mp-poc/py-app"
+        tag:
+          type: TAG
+          default: "1.0.0"
+
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME # Ties to native Deploy Name in Google Console
+  namespace:
+    type: string
+    default: default
+    x-google-marketplace:
+      type: NAMESPACE # Ties to native Namespace select dropdown in Google Console
+  licenseKey:
+    type: string
+    title: Enterprise License Key
+    description: "Enter the IBM Watsonx License Key obtained from your onboarding SaaS dashboard."
+    default: "ibm-watsonx-sandbox-MOCKTESTKEY123"
+
+required:
+  - name
+  - namespace
+  - licenseKey

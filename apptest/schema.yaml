@@ -1,0 +1,11 @@
+properties:
+  name:
+    type: string
+    default: "gke-mp-poc-test"
+  namespace:
+    type: string
+    default: "default"
+  licenseKey:
+    type: string
+    # Provide a dummy license key that passes automated validations during packaging checks
+    default: "ibm-watsonx-sandbox-MOCKTESTKEY123"

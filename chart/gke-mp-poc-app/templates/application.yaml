@@ -1,0 +1,40 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.name }}
+  annotations:
+    kubernetes-engine.cloud.google.com/icon: >-
+      data:image/png;base64,PLACEHOLDER_BASE64_ICON
+    marketplace.cloud.google.com/deploy-info: '{"partner_id": "searce-cloud-products", "product_id": "gke-mp-poc", "partner_name": "Searce"}'
+spec:
+  descriptor:
+    type: GkeMpPocApp
+    version: "1.0.0"
+    description: |-
+      BYOL GKE POC application. A sample application that validates a license
+      key against a SaaS licensing endpoint.
+    maintainers:
+      - name: Searce Cloud Products
+        email: cloud-products@searce.com
+    links:
+      - description: 'User Guide'
+        url: https://example.com/docs
+    notes: |-
+      # Getting Started
+      After deployment, verify your license by checking the app pod logs.
+  info:
+    - name: License Key Status
+      value: "Check pod logs to verify license validation"
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.name }}
+  componentKinds:
+    - group: apps/v1
+      kind: Deployment
+    - group: v1
+      kind: Service
+    - group: v1
+      kind: Secret
