@@ -1,0 +1,39 @@
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: >
+      Initial release of POC product
+    releaseTypes:
+      - Feature
+    recommended: false
+
+  images:
+    poc-app:
+      properties:
+        repository:
+          type: FULL
+          default: "gcr.io/searce-cloud-products/mp-poc-k8s/poc-app"
+        tag:
+          type: TAG
+          default: "1.0.0"
+
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    default: default
+    x-google-marketplace:
+      type: NAMESPACE
+  userInput:
+    type: string
+    title: Sample user input
+    description: Sample input added by end user at deploy time.
+
+required:
+  - name
+  - namespace
