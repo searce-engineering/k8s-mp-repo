@@ -1,0 +1,20 @@
+x-google-marketplace:
+  schemaVersion: v2
+  publishedVersion: "1.0.0"
+
+properties:
+  # The namespace field is mandatory
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  # The app name field is mandatory
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+
+# Map the UI fields to the Helm chart properties
+x-google-marketplace-helm:
+  releaseName: "{{ name }}"
+  namespace: "{{ namespace }}"

@@ -1,0 +1,20 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}
+spec:
+  descriptor:
+    type: "gcp-marketplace-poc"
+    version: "1.0.0"
+    description: "My GCP Marketplace Proof of Concept Application."
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service

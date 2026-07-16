@@ -1,0 +1,9 @@
+# These values will be overridden by the deployer container during installation
+image:
+  # In production, this matches your Artifact Registry path: gcr.io/my-project/my-app
+  repository: us-central1-docker.pkg.dev/mp-poc-k8s-denis/my-poc-deployer-linux
+  tag: "1.0.0"
+
+service:
+  type: ClusterIP
+  port: 80
