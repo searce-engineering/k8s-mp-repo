@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "byol-python-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "byol-python-app.labels" . | nindent 4 }}
+  annotations:
+    app.kubernetes.io/part-of: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "byol-python-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "byol-python-app.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "byol-python-app.serviceAccountName" . }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: {{ .Values.podSecurityContext.runAsUser }}
+        runAsGroup: {{ .Values.podSecurityContext.runAsGroup }}
+        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
+      containers:
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.port }}
+              protocol: TCP
+          env:
+            - name: APP_NAME
+              value: {{ .Values.app.name | quote }}
+            - name: APP_VERSION
+              value: {{ .Values.app.version | quote }}
+            - name: PORT
+              value: {{ .Values.app.port | quote }}
+            # BYOL license key — sourced from Kubernetes Secret
+            - name: LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.license.secretName }}
+                  key: licenseKey
+            # HMAC secret for server-side validation
+            - name: LICENSE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.license.secretName }}
+                  key: licenseSecret
+          volumeMounts:
+            # emptyDir gives gunicorn a writable /tmp for worker temp files.
+            # Required because readOnlyRootFilesystem: true locks the entire
+            # container filesystem — including /tmp — without explicit mounts.
+            - name: tmp
+              mountPath: /tmp
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        # In-memory scratch space for gunicorn worker temp files.
+        # sizeLimit caps memory usage so a misbehaving worker can't
+        # exhaust node memory. Adjust if you need larger temp files.
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.tmpVolume.sizeLimit }}

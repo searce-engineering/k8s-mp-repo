@@ -1,0 +1,32 @@
+# apptest/deployer/schema.yaml
+# ──────────────────────────────────────────────────────────────────────────────
+# Schema OVERLAY for verification testing.
+#
+# During `mpdev verify`, the deployer mounts /data-test on top of /data.
+# Properties defined here override or supplement the main schema.yaml,
+# injecting safe test-only defaults so the tester Pod can validate the
+# full request/response cycle without needing a real customer license.
+#
+# These values are ONLY used during automated verification — never shipped
+# to customers or used in production deployments.
+# ──────────────────────────────────────────────────────────────────────────────
+
+applicationApiVersion: v1beta1
+
+properties:
+  # Inject a deterministic test license pair so the app passes /readyz
+  # and the tester can exercise all protected endpoints end-to-end.
+  # Key = HMAC-SHA256("marketplace-test-secret", "byol-python-app")
+  license.licenseKey:
+    type: string
+    default: "8678bf7d596df3a020ed51f1fa1129ecde2497773b14426b565140d71debfd20"
+
+  license.licenseSecret:
+    type: string
+    default: "marketplace-test-secret"
+
+  # createSecret must be true so Helm creates the K8s Secret from the
+  # values above during the test deployment.
+  license.createSecret:
+    type: boolean
+    default: true

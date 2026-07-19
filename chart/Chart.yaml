@@ -1,0 +1,23 @@
+apiVersion: v2
+name: byol-python-app
+description: >
+  A BYOL (Bring Your Own License) Python application for GCP Marketplace.
+  Customers supply a pre-purchased license key; the app validates it on startup.
+
+type: application
+version: 1.0.0        # Chart version — bump on every chart change
+appVersion: "1.0.0"   # App image version
+
+keywords:
+  - python
+  - flask
+  - byol
+  - gcp-marketplace
+
+home: https://your-company.com
+sources:
+  - https://github.com/your-org/byol-python-app
+
+maintainers:
+  - name: Your Name
+    email: you@your-company.com

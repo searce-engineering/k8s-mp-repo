@@ -1,0 +1,46 @@
+# GCP Marketplace requires an Application CR (Application CRD from kubernetes-sigs)
+# so the Marketplace console can track your app's status.
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "byol-python-app.labels" . | nindent 4 }}
+  annotations:
+    kubernetes-engine.cloud.google.com/icon: >-
+      data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==
+    marketplace.cloud.google.com/deploy-info: >-
+      {"partner_id":"your-partner-id","product_id":"byol-python-app","partner_name":"Your Company"}
+spec:
+  descriptor:
+    type: byol-python-app
+    version: {{ .Chart.AppVersion | quote }}
+    description: BYOL Python application deployed on GKE via GCP Marketplace.
+    keywords:
+      - python
+      - flask
+      - byol
+    links:
+      - description: Documentation
+        url: https://your-company.com/docs
+      - description: Support
+        url: https://your-company.com/support
+    maintainers:
+      - name: Your Company
+        email: support@your-company.com
+    notes: >-
+      After deployment verify your license is active:
+      kubectl get pods -n {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "byol-python-app.name" . }}
+  componentKinds:
+    - group: apps/v1
+      kind: Deployment
+    - group: v1
+      kind: Service
+    - group: v1
+      kind: ServiceAccount
+    - group: v1
+      kind: Secret

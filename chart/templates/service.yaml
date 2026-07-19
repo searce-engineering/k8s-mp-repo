@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "byol-python-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "byol-python-app.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      # targetPort references the named port ("http") declared in the
+      # Deployment's containerPort list — more resilient than a raw number
+      # because it stays correct even if the container port changes in values.
+      targetPort: http
+      protocol: TCP
+      # appProtocol lets service meshes (Istio, Linkerd) and GKE automatically
+      # detect the protocol without needing annotations.
+      appProtocol: http
+      {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }}
+      # nodePort is only valid when type is NodePort.
+      # If left unset Kubernetes assigns a random port in the 30000-32767 range.
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+  # selector must match selectorLabels in the Deployment pod template exactly.
+  selector:
+    {{- include "byol-python-app.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,99 @@
+# schema.yaml — GCP Marketplace deployer schema
+# Drives the "Configure & Deploy" UI shown to customers.
+# Docs: https://cloud.google.com/marketplace/docs/partners/kubernetes/create-app-package
+
+applicationApiVersion: v1beta1
+
+properties:
+  # ── Kubernetes namespace ────────────────────────────────────────────────────
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+
+  # ── App name (instance name) ─────────────────────────────────────────────
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+
+  # ── App image ─────────────────────────────────────────────────────────────
+  image.repository:
+    type: string
+    default: gcr.io/YOUR_PROJECT_ID/byol-python-app
+    x-google-marketplace:
+      type: IMAGE
+      image:
+        generatedProperties:
+          splitToRegistryRepoTag:
+            registry:   image.registry
+            repo:       image.repo
+            tag:        image.tag
+
+  # ── Replica count ─────────────────────────────────────────────────────────
+  replicaCount:
+    type: integer
+    title: Replica Count
+    description: Number of application pod replicas.
+    default: 1
+    minimum: 1
+    maximum: 10
+
+  # ── BYOL License Key ──────────────────────────────────────────────────────
+  license.licenseKey:
+    type: string
+    title: BYOL License Key
+    description: >
+      Your pre-purchased license key. Contact support@your-company.com to
+      obtain a license before deploying.
+    x-google-marketplace:
+      type: STRING
+
+  # ── License Secret (server-side HMAC secret) ──────────────────────────────
+  license.licenseSecret:
+    type: string
+    title: License Validation Secret
+    description: >
+      The HMAC secret used to verify the license key.
+      Provided to you alongside your license key.
+    x-google-marketplace:
+      type: STRING
+
+  # ── Service type ──────────────────────────────────────────────────────────
+  service.type:
+    type: string
+    title: Service Type
+    description: Kubernetes service exposure type.
+    default: ClusterIP
+    enum:
+      - ClusterIP
+      - LoadBalancer
+      - NodePort
+
+  # ── ServiceAccount ────────────────────────────────────────────────────────
+  serviceAccount.name:
+    type: string
+    title: Service Account Name
+    x-google-marketplace:
+      type: SERVICE_ACCOUNT
+      serviceAccount:
+        description: >
+          Service account used by the application pod.
+        roles:
+          - type: ClusterRole
+            rulesType: PREDEFINED
+            rulesFromRoleName: view
+
+  # ── Reporting secret (required by Marketplace) ────────────────────────────
+  reportingSecret:
+    type: string
+    x-google-marketplace:
+      type: REPORTING_SECRET
+
+required:
+  - name
+  - namespace
+  - image.repository
+  - license.licenseKey
+  - license.licenseSecret
+  - reportingSecret

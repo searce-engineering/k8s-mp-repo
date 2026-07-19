@@ -1,0 +1,90 @@
+# ── Image ────────────────────────────────────────────────────────────────────
+image:
+  # Replace with your Artifact Registry path after push
+  repository: us-docker.pkg.dev/searce-cloud-products/gcp-mp-poc-k8s/app
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+# ── Deployment ────────────────────────────────────────────────────────────────
+replicaCount: 1
+
+# ── Service ───────────────────────────────────────────────────────────────────
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# ── Ingress (optional) ────────────────────────────────────────────────────────
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: byol-app.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# ── Resources ─────────────────────────────────────────────────────────────────
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+
+# ── BYOL License ──────────────────────────────────────────────────────────────
+license:
+  # licenseKey: injected via the Marketplace deployer UI or kubectl secret
+  # Do NOT commit a real key here.
+  secretName: "byol-license-secret"
+  keyEnvVar:    "LICENSE_KEY"
+  secretEnvVar: "LICENSE_SECRET"
+
+# ── App config ────────────────────────────────────────────────────────────────
+app:
+  name: "byol-python-app"
+  version: "1.0.0"
+  port: 8080
+
+# ── Marketplace metadata ──────────────────────────────────────────────────────
+# Required by GCP Marketplace deployer
+reportingSecret: "byol-python-app-reporting-secret"
+
+# ── ServiceAccount ────────────────────────────────────────────────────────────
+serviceAccount:
+  create: true
+  name: "byol-python-app-sa"
+  annotations: {}
+
+# ── Tmp volume ───────────────────────────────────────────────────────────────
+# emptyDir mounted at /tmp so gunicorn can write worker temp files with
+# readOnlyRootFilesystem: true. medium: Memory keeps it off disk entirely.
+tmpVolume:
+  sizeLimit: "64Mi"
+
+# ── Pod security context ─────────────────────────────────────────────────────
+# Must match the numeric UID/GID set in the Dockerfile (1001).
+# Kubernetes requires a numeric UID to enforce runAsNonRoot — named users
+# (e.g. "appuser") cannot be verified at runtime.
+podSecurityContext:
+  runAsUser: 1001   # must match USER in Dockerfile
+  runAsGroup: 1001  # must match GID in Dockerfile
+  fsGroup: 1001     # ensures mounted volumes (e.g. Secrets) are group-readable
+
+# ── Probes ────────────────────────────────────────────────────────────────────
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 15
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10

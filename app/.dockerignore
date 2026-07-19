@@ -1,0 +1,37 @@
+# Git
+.git
+.gitignore
+
+# Python build artifacts and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.egg-info/
+dist/
+build/
+
+# Virtual environments (Crucial to ignore so you don't copy local OS-specific packages)
+.venv/
+venv/
+ENV/
+env/
+
+# Environments and Secrets
+.env
+*.env
+.secrets
+*.pem
+*.key
+
+# IDEs and OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Docker files (Optional, prevents copying the build instructions into the container)
+Dockerfile
+.dockerignore
