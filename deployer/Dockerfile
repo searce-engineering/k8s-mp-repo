@@ -13,14 +13,14 @@
 FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.7
 
 # ── Main deployment artifacts ─────────────────────────────────────────────
-COPY chart/           /data/chart/
-COPY chart/schema.yaml /data/schema.yaml
+COPY chart           /data/chart
+COPY schema.yaml /data/
 
 # ── Verification test artifacts ───────────────────────────────────────────
 # /data-test is overlaid onto /data by mpdev verify before running tests.
 # The tester Pod template and schema overlay live here.
-COPY apptest/deployer/chart/    /data-test/chart/
-COPY apptest/deployer/schema.yaml /data-test/schema.yaml
+# COPY ../apptest/deployer/chart/    /data-test/chart/
+# COPY ../apptest/deployer/schema.yaml /data-test/schema.yaml
 
 # ── Timeouts ──────────────────────────────────────────────────────────────
 # WAIT_FOR_READY_TIMEOUT: seconds to wait for all app resources to become
