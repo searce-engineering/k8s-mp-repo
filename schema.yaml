@@ -1,20 +1,31 @@
 x-google-marketplace:
   schemaVersion: v2
+  applicationApiVersion: v1beta1
   publishedVersion: "1.0.0"
+  publishedVersionMetadata:
+    releaseNote: "Initial Release of the IBM Watsonx GKE BYOL Integration POC."
+    releaseTypes:
+      - Feature
+    recommended: false
+  
+  # MUST exist: Maps the logical image to the property below
+  images:
+    "":
+      properties:
+        repository:
+          type: FULL
+          default: us-docker.pkg.dev/searce-cloud-products/mp-poc-k8s-denis/my-poc-app:1.0.0
 
 properties:
-  # The namespace field is mandatory
-  namespace:
-    type: string
-    x-google-marketplace:
-      type: NAMESPACE
-  # The app name field is mandatory
-  name:
+  name:       
     type: string
     x-google-marketplace:
       type: NAME
+  namespace:  
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
 
-# Map the UI fields to the Helm chart properties
-x-google-marketplace-helm:
-  releaseName: "{{ name }}"
-  namespace: "{{ namespace }}"
+required:
+  - name
+  - namespace

@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
+  annotations:
+    marketplace.cloud.google.com/deploy-info: '{"partner_id": "searce-cloud-products", "product_id": "ibm-poc-app-k8s", "partner_name": "Human Friendly Name"}'
 spec:
   descriptor:
     type: "gcp-marketplace-poc"
