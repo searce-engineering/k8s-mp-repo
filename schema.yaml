@@ -20,7 +20,7 @@ properties:
   # ── App image ─────────────────────────────────────────────────────────────
   image.repository:
     type: string
-    default: us-docker.pkg.dev/searce-cloud-products/gcp-mp-poc-k8s
+    default: us-docker.pkg.dev/searce-cloud-products/gcp-mp-poc-k8s/app
     x-google-marketplace:
       type: IMAGE
       image:
