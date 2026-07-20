@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "byol-python-app.fullname" . }}
+  name: {{ include "gcp-mp-poc-k8s.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "byol-python-app.labels" . | nindent 4 }}
+    {{- include "gcp-mp-poc-k8s.labels" . | nindent 4 }}
   annotations:
     app.kubernetes.io/part-of: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "byol-python-app.selectorLabels" . | nindent 6 }}
+      {{- include "gcp-mp-poc-k8s.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "byol-python-app.selectorLabels" . | nindent 8 }}
+        {{- include "gcp-mp-poc-k8s.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "byol-python-app.serviceAccountName" . }}
+      serviceAccountName: {{ include "gcp-mp-poc-k8s.serviceAccountName" . }}
       securityContext:
         runAsNonRoot: true
         runAsUser: {{ .Values.podSecurityContext.runAsUser }}

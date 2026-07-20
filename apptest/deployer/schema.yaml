@@ -16,7 +16,7 @@ applicationApiVersion: v1beta1
 properties:
   # Inject a deterministic test license pair so the app passes /readyz
   # and the tester can exercise all protected endpoints end-to-end.
-  # Key = HMAC-SHA256("marketplace-test-secret", "byol-python-app")
+  # Key = HMAC-SHA256("marketplace-test-secret", "gcp-mp-poc-k8s")
   license.licenseKey:
     type: string
     default: "8678bf7d596df3a020ed51f1fa1129ecde2497773b14426b565140d71debfd20"

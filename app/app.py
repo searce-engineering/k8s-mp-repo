@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 APP_VERSION   = os.environ.get("APP_VERSION", "1.0.0")
-APP_NAME      = os.environ.get("APP_NAME", "byol-python-app")
+APP_NAME      = os.environ.get("APP_NAME", "gcp-mp-poc-k8s")
 LICENSE_KEY   = os.environ.get("LICENSE_KEY", "")          # injected from K8s Secret
 LICENSE_SECRET = os.environ.get("LICENSE_SECRET", "")      # your server-side secret
 

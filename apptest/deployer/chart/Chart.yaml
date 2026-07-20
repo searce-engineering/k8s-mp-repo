@@ -1,8 +1,8 @@
 apiVersion: v2
-name: byol-python-app
+name: gcp-mp-poc-k8s
 # Must match the main chart name exactly — the deployer overlays
 # this chart's templates on top of the main chart's resources.
-description: Verification tester for byol-python-app
+description: Verification tester for gcp-mp-poc-k8s
 type: application
 version: 1.0.0
 appVersion: "1.0.0"

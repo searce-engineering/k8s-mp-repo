@@ -6,15 +6,15 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "byol-python-app.labels" . | nindent 4 }}
+    {{- include "gcp-mp-poc-k8s.labels" . | nindent 4 }}
   annotations:
     kubernetes-engine.cloud.google.com/icon: >-
       data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==
     marketplace.cloud.google.com/deploy-info: >-
-      {"partner_id":"your-partner-id","product_id":"byol-python-app","partner_name":"Your Company"}
+      {"partner_id":"","product_id":"gcp-mp-poc-k8s","partner_name":"Searce Inc"}
 spec:
   descriptor:
-    type: byol-python-app
+    type: gcp-mp-poc-k8s
     version: {{ .Chart.AppVersion | quote }}
     description: BYOL Python application deployed on GKE via GCP Marketplace.
     keywords:
@@ -34,7 +34,7 @@ spec:
       kubectl get pods -n {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "byol-python-app.name" . }}
+      app.kubernetes.io/name: {{ include "gcp-mp-poc-k8s.name" . }}
   componentKinds:
     - group: apps/v1
       kind: Deployment

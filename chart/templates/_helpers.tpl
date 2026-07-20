@@ -2,7 +2,7 @@
   _helpers.tpl
   ─────────────────────────────────────────────────────────────────────────────
   Named templates (partials) shared across all chart templates.
-  Every define block is callable via {{ include "byol-python-app.<name>" . }}
+  Every define block is callable via {{ include "gcp-mp-poc-k8s.<name>" . }}
 
   Helm rules to keep in mind:
     • Names are global — always prefix with the chart name to avoid collisions
@@ -15,17 +15,17 @@
 
 
 {{/*
-  byol-python-app.name
+  gcp-mp-poc-k8s.name
   Returns the chart name, allowing an override via .Values.nameOverride.
   Used as the base for the app.kubernetes.io/name label.
 */}}
-{{- define "byol-python-app.name" -}}
+{{- define "gcp-mp-poc-k8s.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 
 {{/*
-  byol-python-app.fullname
+  gcp-mp-poc-k8s.fullname
   Returns the fully-qualified resource name used for Deployment, Service, etc.
   Logic:
     1. If .Values.fullnameOverride is set → use that directly.
@@ -34,7 +34,7 @@
        when `helm install myapp ./chart`).
   Callers: deployment.yaml, service.yaml
 */}}
-{{- define "byol-python-app.fullname" -}}
+{{- define "gcp-mp-poc-k8s.fullname" -}}
 {{- if .Values.fullnameOverride }}
   {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -49,19 +49,19 @@
 
 
 {{/*
-  byol-python-app.chart
+  gcp-mp-poc-k8s.chart
   Returns the "chart label" value: <chart-name>-<chart-version>.
   The + → _ replacement makes SemVer build metadata (e.g. 1.0.0+build1)
   safe for use as a Kubernetes label value.
-  Callers: byol-python-app.labels (indirectly on all resources)
+  Callers: gcp-mp-poc-k8s.labels (indirectly on all resources)
 */}}
-{{- define "byol-python-app.chart" -}}
+{{- define "gcp-mp-poc-k8s.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 
 {{/*
-  byol-python-app.labels
+  gcp-mp-poc-k8s.labels
   Full set of recommended Kubernetes labels applied to every resource.
   Includes both selector labels (immutable) and informational labels.
 
@@ -72,16 +72,16 @@
   Callers: deployment.yaml, service.yaml, serviceaccount.yaml,
            secret.yaml, application.yaml
 */}}
-{{- define "byol-python-app.labels" -}}
-helm.sh/chart: {{ include "byol-python-app.chart" . }}
-{{ include "byol-python-app.selectorLabels" . }}
+{{- define "gcp-mp-poc-k8s.labels" -}}
+helm.sh/chart: {{ include "gcp-mp-poc-k8s.chart" . }}
+{{ include "gcp-mp-poc-k8s.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 
 {{/*
-  byol-python-app.selectorLabels
+  gcp-mp-poc-k8s.selectorLabels
   Minimal immutable labels used in:
     • spec.selector.matchLabels  (Deployment — must never change after creation)
     • spec.template.metadata.labels  (must be a superset of matchLabels)
@@ -90,14 +90,14 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
   Keep this set small and stable — adding a label here on an upgrade will
   break the rollout because Kubernetes rejects changes to Deployment selectors.
 */}}
-{{- define "byol-python-app.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "byol-python-app.name" . }}
+{{- define "gcp-mp-poc-k8s.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "gcp-mp-poc-k8s.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 
 {{/*
-  byol-python-app.serviceAccountName
+  gcp-mp-poc-k8s.serviceAccountName
   Returns the ServiceAccount name the Deployment should use.
   Logic:
     • If serviceAccount.create is true  → use serviceAccount.name (or the
@@ -109,9 +109,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
   Callers: deployment.yaml (spec.template.spec.serviceAccountName)
            serviceaccount.yaml (metadata.name, guarded by .Values.serviceAccount.create)
 */}}
-{{- define "byol-python-app.serviceAccountName" -}}
+{{- define "gcp-mp-poc-k8s.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-  {{- default (include "byol-python-app.fullname" .) .Values.serviceAccount.name }}
+  {{- default (include "gcp-mp-poc-k8s.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
   {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

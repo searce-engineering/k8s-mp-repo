@@ -52,8 +52,8 @@ BYOL Flow:
 
 | Image | Purpose |
 |---|---|
-| `byol-python-app` | Your actual Flask application |
-| `byol-python-app/deployer` | Marketplace deployer — wraps the Helm chart |
+| `gcp-mp-poc-k8s` | Your actual Flask application |
+| `gcp-mp-poc-k8s/deployer` | Marketplace deployer — wraps the Helm chart |
 
 ---
 
@@ -121,13 +121,13 @@ alias mpdev='docker run --rm -it \
 cd gcp-marketplace-byol/app
 
 # Build the image
-docker build -t byol-python-app:local .
+docker build -t gcp-mp-poc-k8s:local .
 
 # Generate a valid license key (run once, save both values)
 python3 - <<'EOF'
 import hmac, hashlib
 secret = "my-test-secret"
-app_name = "byol-python-app"
+app_name = "gcp-mp-poc-k8s"
 key = hmac.new(secret.encode(), app_name.encode(), hashlib.sha256).hexdigest()
 print(f"LICENSE_KEY    = {key}")
 print(f"LICENSE_SECRET = {secret}")
@@ -137,7 +137,7 @@ EOF
 docker run -p 8080:8080 \
   -e LICENSE_KEY="<output-from-above>" \
   -e LICENSE_SECRET="my-test-secret" \
-  byol-python-app:local
+  gcp-mp-poc-k8s:local
 
 # Test endpoints
 curl http://localhost:8080/healthz          # → {"status":"ok"}
@@ -146,7 +146,7 @@ curl http://localhost:8080/                 # → Hello message
 curl http://localhost:8080/api/data         # → Sample data
 
 # Test with invalid key
-docker run -p 8081:8080 -e LICENSE_KEY="bad-key" -e LICENSE_SECRET="my-test-secret" byol-python-app:local
+docker run -p 8081:8080 -e LICENSE_KEY="bad-key" -e LICENSE_SECRET="my-test-secret" gcp-mp-poc-k8s:local
 curl http://localhost:8081/                 # → 403 license_invalid
 ```
 
@@ -170,20 +170,20 @@ helm lint ./chart
 # Dry-run install
 helm install byol-app ./chart \
   --namespace byol-test \
-  --set image.repository=byol-python-app \
+  --set image.repository=gcp-mp-poc-k8s \
   --set image.tag=local \
   --dry-run
 
 # Real install (load image into kind first)
-kind load docker-image byol-python-app:local --name byol-test
+kind load docker-image gcp-mp-poc-k8s:local --name byol-test
 helm install byol-app ./chart \
   --namespace byol-test \
-  --set image.repository=byol-python-app \
+  --set image.repository=gcp-mp-poc-k8s \
   --set image.tag=local
 
 # Verify
 kubectl get pods -n byol-test
-kubectl port-forward svc/byol-app-byol-python-app 8080:80 -n byol-test
+kubectl port-forward svc/byol-app-gcp-mp-poc-k8s 8080:80 -n byol-test
 curl http://localhost:8080/healthz
 ```
 
@@ -218,7 +218,7 @@ gcloud auth configure-docker
 
 ```bash
 # Create a Docker repository in Artifact Registry
-gcloud artifacts repositories create byol-python-app \
+gcloud artifacts repositories create gcp-mp-poc-k8s \
   --repository-format=docker \
   --location=$REGION \
   --description="BYOL Python App for GCP Marketplace"
@@ -227,7 +227,7 @@ gcloud artifacts repositories create byol-python-app \
 gcloud auth configure-docker ${REGION}-docker.pkg.dev
 
 # Update your image path variable
-export IMAGE_BASE="${REGION}-docker.pkg.dev/${PROJECT_ID}/byol-python-app"
+export IMAGE_BASE="${REGION}-docker.pkg.dev/${PROJECT_ID}/gcp-mp-poc-k8s"
 ```
 
 ### 5c. Create GKE Cluster for Testing
@@ -277,7 +277,7 @@ echo "App image: $APP_IMAGE"
 Edit `chart/values.yaml`:
 ```yaml
 image:
-  repository: us-central1-docker.pkg.dev/YOUR_PROJECT_ID/byol-python-app/app
+  repository: us-central1-docker.pkg.dev/YOUR_PROJECT_ID/gcp-mp-poc-k8s/app
   tag: "1.0.0"
 ```
 
@@ -302,7 +302,7 @@ echo "Deployer image: $DEPLOYER_IMAGE"
 gsutil iam ch allUsers:objectViewer gs://artifacts.${PROJECT_ID}.appspot.com
 
 # Or with Artifact Registry:
-gcloud artifacts repositories add-iam-policy-binding byol-python-app \
+gcloud artifacts repositories add-iam-policy-binding gcp-mp-poc-k8s \
   --location=$REGION \
   --member="allUsers" \
   --role="roles/artifactregistry.reader"
@@ -330,10 +330,10 @@ helm install byol-app ./chart \
   --set image.tag="${APP_VERSION}"
 
 # Watch rollout
-kubectl rollout status deployment/byol-app-byol-python-app -n byol-prod
+kubectl rollout status deployment/byol-app-gcp-mp-poc-k8s -n byol-prod
 
 # Expose for testing
-kubectl port-forward svc/byol-app-byol-python-app 8080:80 -n byol-prod &
+kubectl port-forward svc/byol-app-gcp-mp-poc-k8s 8080:80 -n byol-prod &
 curl http://localhost:8080/
 curl http://localhost:8080/license/status
 ```
@@ -364,7 +364,7 @@ In Producer Portal → **Products** → **Add Product** → **Kubernetes App**:
 
 | Field | Value |
 |---|---|
-| Product ID | `byol-python-app` |
+| Product ID | `gcp-mp-poc-k8s` |
 | Product Name | `BYOL Python App` |
 | Pricing Model | **BYOL** |
 | Category | Choose most appropriate |
@@ -386,10 +386,10 @@ In Producer Portal → **Products** → **Add Product** → **Kubernetes App**:
 
 ```
 App container image:
-  us-central1-docker.pkg.dev/YOUR_PROJECT_ID/byol-python-app/app:1.0.0
+  us-central1-docker.pkg.dev/YOUR_PROJECT_ID/gcp-mp-poc-k8s/app:1.0.0
 
 Deployer image:
-  us-central1-docker.pkg.dev/YOUR_PROJECT_ID/byol-python-app/deployer:1.0.0
+  us-central1-docker.pkg.dev/YOUR_PROJECT_ID/gcp-mp-poc-k8s/deployer:1.0.0
 ```
 
 ### 8d. Grant Marketplace Service Account Access to Your Images
@@ -400,7 +400,7 @@ Deployer image:
 
 export MARKETPLACE_SA="cloud-marketplace@system.gserviceaccount.com"
 
-gcloud artifacts repositories add-iam-policy-binding byol-python-app \
+gcloud artifacts repositories add-iam-policy-binding gcp-mp-poc-k8s \
   --location=$REGION \
   --member="serviceAccount:${MARKETPLACE_SA}" \
   --role="roles/artifactregistry.reader"
@@ -516,7 +516,7 @@ def generate_license(app_name: str) -> tuple[str, str]:
     ).hexdigest()
     return license_key, license_secret
 
-key, secret = generate_license("byol-python-app")
+key, secret = generate_license("gcp-mp-poc-k8s")
 print(f"LICENSE_KEY    = {key}")
 print(f"LICENSE_SECRET = {secret}")
 ```
@@ -539,7 +539,7 @@ print(f"LICENSE_SECRET = {secret}")
 
 ```bash
 # View app logs
-kubectl logs -l app.kubernetes.io/name=byol-python-app -n byol-prod
+kubectl logs -l app.kubernetes.io/name=gcp-mp-poc-k8s -n byol-prod
 
 # Describe the Application CR
 kubectl describe application byol-app -n byol-prod

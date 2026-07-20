@@ -24,7 +24,7 @@ COPY app.py .
 RUN chown -R appuser:appgroup /app
 USER 1001
 
-ENV APP_NAME="byol-python-app" \
+ENV APP_NAME="gcp-mp-poc-k8s" \
     APP_VERSION="1.0.0" \
     PORT="8080" \
     LICENSE_KEY="" \

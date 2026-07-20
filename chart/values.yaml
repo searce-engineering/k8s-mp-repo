@@ -45,18 +45,18 @@ license:
 
 # ── App config ────────────────────────────────────────────────────────────────
 app:
-  name: "byol-python-app"
+  name: "gcp-mp-poc-k8s"
   version: "1.0.0"
   port: 8080
 
 # ── Marketplace metadata ──────────────────────────────────────────────────────
 # Required by GCP Marketplace deployer
-reportingSecret: "byol-python-app-reporting-secret"
+reportingSecret: "gcp-mp-poc-k8s-reporting-secret"
 
 # ── ServiceAccount ────────────────────────────────────────────────────────────
 serviceAccount:
   create: true
-  name: "byol-python-app-sa"
+  name: "gcp-mp-poc-k8s-sa"
   annotations: {}
 
 # ── Tmp volume ───────────────────────────────────────────────────────────────

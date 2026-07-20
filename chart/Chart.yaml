@@ -1,5 +1,5 @@
 apiVersion: v2
-name: byol-python-app
+name: gcp-mp-poc-k8s
 description: >
   A BYOL (Bring Your Own License) Python application for GCP Marketplace.
   Customers supply a pre-purchased license key; the app validates it on startup.
@@ -16,7 +16,7 @@ keywords:
 
 home: https://your-company.com
 sources:
-  - https://github.com/your-org/byol-python-app
+  - https://github.com/your-org/gcp-mp-poc-k8s
 
 maintainers:
   - name: Your Name

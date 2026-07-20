@@ -32,9 +32,9 @@ spec:
 
       env:
         # Construct the in-cluster service hostname from the release name.
-        # Matches the Service name produced by byol-python-app.fullname.
+        # Matches the Service name produced by gcp-mp-poc-k8s.fullname.
         - name: SERVICE_HOST
-          value: "{{ .Release.Name }}-byol-python-app"
+          value: "{{ .Release.Name }}-gcp-mp-poc-k8s"
         - name: SERVICE_PORT
           value: "80"
         - name: RETRY_COUNT
@@ -70,7 +70,7 @@ spec:
             return 1
           }
 
-          echo "=== Starting verification tests for byol-python-app ==="
+          echo "=== Starting verification tests for gcp-mp-poc-k8s ==="
           echo "Target: $BASE_URL"
           echo ""
 
