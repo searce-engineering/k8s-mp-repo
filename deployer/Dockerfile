@@ -10,7 +10,9 @@
 #   /data-test/chart/    ← apptest Helm chart (overlaid during mpdev verify)
 #   /data-test/schema.yaml ← test schema overlay (injects test license values)
 # ─────────────────────────────────────────────────────────────────────────────
-FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.7
+FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:latest
+
+LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/services/gcp-mp-poc-k8s.endpoints.searce-cloud-products.cloud.goog"
 
 # ── Main deployment artifacts ─────────────────────────────────────────────
 COPY chart           /data/chart

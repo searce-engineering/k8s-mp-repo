@@ -1,26 +1,28 @@
-# ────────────────────────────────────────────────────────────
-# Single-stage build — reliable on Apple Silicon / Rancher Desktop
-# Multi-stage builds with venv COPY can produce incomplete layers
-# on some Docker runtimes (Rancher Desktop, colima, etc.).
-# pip installs gunicorn to /usr/local/bin — always in PATH.
-# ────────────────────────────────────────────────────────────
 FROM python:3.12-slim
 
-# Non-root user (GCP Marketplace security requirement)
+# GCP Marketplace required annotation (update with your actual service name)
+LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/services/gcp-mp-poc-k8s.endpoints.searce-cloud-products.cloud.goog"
+
+# Ensure immediate log output in kubectl and avoid writing .pyc on disk
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Patch OS vulnerabilities for GCP Artifact Analysis
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
+
+# Non-root user setup
 RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid appgroup --no-create-home --shell /sbin/nologin appuser
 
-
 WORKDIR /app
 
-# Install dependencies as root so they land in /usr/local/bin + site-packages
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application source
 COPY app.py .
 
-# Hand ownership of the workdir to appuser
 RUN chown -R appuser:appgroup /app
 USER 1001
 
