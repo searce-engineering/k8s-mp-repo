@@ -27,7 +27,7 @@ properties:
         generatedProperties:
           splitToRegistryRepoTag:
             registry:   image.registry
-            repository: image.repo
+            repo:       image.repo
             tag:        image.tag
 
   # ── Replica count ─────────────────────────────────────────────────────────
