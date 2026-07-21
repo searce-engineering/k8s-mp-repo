@@ -27,7 +27,7 @@ properties:
         generatedProperties:
           splitToRegistryRepoTag:
             registry:   image.registry
-            repo:       image.repo
+            repository: image.repo
             tag:        image.tag
 
   # ── Replica count ─────────────────────────────────────────────────────────
@@ -46,8 +46,6 @@ properties:
     description: >
       Your pre-purchased license key. Contact support@your-company.com to
       obtain a license before deploying.
-    x-google-marketplace:
-      type: STRING
 
   # ── License Secret (server-side HMAC secret) ──────────────────────────────
   license.licenseSecret:
@@ -56,8 +54,6 @@ properties:
     description: >
       The HMAC secret used to verify the license key.
       Provided to you alongside your license key.
-    x-google-marketplace:
-      type: STRING
 
   # ── Service type ──────────────────────────────────────────────────────────
   service.type:
@@ -93,7 +89,7 @@ properties:
 required:
   - name
   - namespace
-  - image.repository
+  # - image.repository (Safe to leave commented since it has a default)
   - license.licenseKey
   - license.licenseSecret
   - reportingSecret

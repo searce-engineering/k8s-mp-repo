@@ -51,7 +51,7 @@ app:
 
 # ── Marketplace metadata ──────────────────────────────────────────────────────
 # Required by GCP Marketplace deployer
-reportingSecret: "gcp-mp-poc-k8s-reporting-secret"
+reportingSecret: "REPORTING_SECRET"
 
 # ── ServiceAccount ────────────────────────────────────────────────────────────
 serviceAccount:
