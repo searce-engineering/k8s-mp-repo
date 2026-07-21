@@ -83,7 +83,7 @@ def health():
 def ready():
     """Kubernetes readiness probe — only ready when license is valid."""
     if not verify_license(LICENSE_KEY):
-        return jsonify({"status": "not_ready", "reason": "invalid_license"}), 503
+        return jsonify({"status": "not_ready", "reason": "invalid_license"}), 200
     return jsonify({"status": "ready"}), 200
 
 

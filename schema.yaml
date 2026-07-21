@@ -31,14 +31,14 @@ properties:
     x-google-marketplace:
       type: NAME
 
-  # ── Replica count ─────────────────────────────────────────────────────────
-  replicaCount:
-    type: integer
-    title: Replica Count
-    description: Number of application pod replicas.
-    default: 1
-    minimum: 1
-    maximum: 10
+  # # ── Replica count ─────────────────────────────────────────────────────────
+  # replicaCount:
+  #   type: integer
+  #   title: Replica Count
+  #   description: Number of application pod replicas.
+  #   default: 1
+  #   minimum: 1
+  #   maximum: 10
 
   # ── BYOL License Key ──────────────────────────────────────────────────────
   license.licenseKey:
@@ -56,30 +56,30 @@ properties:
       The HMAC secret used to verify the license key.
       Provided to you alongside your license key.
 
-  # ── Service type ──────────────────────────────────────────────────────────
-  service.type:
-    type: string
-    title: Service Type
-    description: Kubernetes service exposure type.
-    default: ClusterIP
-    enum:
-      - ClusterIP
-      - LoadBalancer
-      - NodePort
+  # # ── Service type ──────────────────────────────────────────────────────────
+  # service.type:
+  #   type: string
+  #   title: Service Type
+  #   description: Kubernetes service exposure type.
+  #   default: ClusterIP
+  #   enum:
+  #     - ClusterIP
+  #     - LoadBalancer
+  #     - NodePort
 
   # ── ServiceAccount ────────────────────────────────────────────────────────
-  serviceAccount.name:
-    type: string
-    title: Service Account Name
-    x-google-marketplace:
-      type: SERVICE_ACCOUNT
-      serviceAccount:
-        description: >
-          Service account used by the application pod.
-        roles:
-          - type: ClusterRole
-            rulesType: PREDEFINED
-            rulesFromRoleName: view
+  # serviceAccount.name:
+  #   type: string
+  #   title: Service Account Name
+  #   x-google-marketplace:
+  #     type: SERVICE_ACCOUNT
+  #     serviceAccount:
+  #       description: >
+  #         Service account used by the application pod.
+  #       roles:
+  #         - type: ClusterRole
+  #           rulesType: PREDEFINED
+  #           rulesFromRoleName: view
 
   # ── Reporting secret (required by Marketplace) ────────────────────────────
   reportingSecret:
