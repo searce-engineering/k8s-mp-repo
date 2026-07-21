@@ -1,8 +1,22 @@
 # schema.yaml — GCP Marketplace deployer schema
 # Drives the "Configure & Deploy" UI shown to customers.
 # Docs: https://cloud.google.com/marketplace/docs/partners/kubernetes/create-app-package
-
-applicationApiVersion: v1beta1
+x-google-marketplace:
+  schemaVersion: v2
+  applicationApiVersion: v1beta1
+  publishedVersion: '1.0.0'
+  publishedVersionMetadata:
+    releaseNote: >-
+      Initial release.
+    releaseTypes:
+    - Feature
+    recommended: false
+  images:
+    "":
+      properties:
+        repository:
+          type: FULL
+          default: us-docker.pkg.dev/searce-cloud-products/gcp-mp-poc-k8s/app:1.0.0
 
 properties:
   # ── Kubernetes namespace ────────────────────────────────────────────────────
@@ -16,19 +30,6 @@ properties:
     type: string
     x-google-marketplace:
       type: NAME
-
-  # ── App image ─────────────────────────────────────────────────────────────
-  image.repository:
-    type: string
-    default: us-docker.pkg.dev/searce-cloud-products/gcp-mp-poc-k8s/app:1.0.0
-    x-google-marketplace:
-      type: IMAGE
-      image:
-        generatedProperties:
-          splitToRegistryRepoTag:
-            registry:   image.registry
-            repo:       image.repo
-            tag:        image.tag
 
   # ── Replica count ─────────────────────────────────────────────────────────
   replicaCount:
@@ -89,7 +90,6 @@ properties:
 required:
   - name
   - namespace
-  # - image.repository (Safe to leave commented since it has a default)
   - license.licenseKey
   - license.licenseSecret
   - reportingSecret
