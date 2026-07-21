@@ -15,7 +15,7 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:latest
 LABEL "com.googleapis.cloudmarketplace.product.service.name"="services/services/gcp-mp-poc-k8s.endpoints.searce-cloud-products.cloud.goog"
 
 # ── Main deployment artifacts ─────────────────────────────────────────────
-COPY chart           /data/chart
+COPY chart/gcp-mp-poc-k8s /data/chart
 COPY schema.yaml /data/
 
 # ── Verification test artifacts ───────────────────────────────────────────
