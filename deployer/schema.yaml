@@ -14,7 +14,7 @@ x-google-marketplace:
       properties:
         repository:
           type: FULL
-          default: "gcr.io/searce-cloud-products/mp-poc-k8s/poc-app"
+          default: "gcr.io/searce-cloud-products/mp-poc-k8s"
         tag:
           type: TAG
           default: "1.0.0"
