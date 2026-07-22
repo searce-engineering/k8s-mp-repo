@@ -4,7 +4,7 @@ x-google-marketplace:
   publishedVersion: "1.0.0"
   publishedVersionMetadata:
     releaseNote: >
-      Initial release
+      Added license key support for BYOL verification
     releaseTypes:
       - Feature
     recommended: false
@@ -33,7 +33,14 @@ properties:
     type: string
     title: Sample user input
     description: Sample input added by end user at deploy time.
+  licenseKey:
+    type: string
+    title: License Key
+    description: Enter the license key you received after purchasing this software from us (BYOL). Your app will validate this key on startup.
+    x-google-marketplace:
+      type: STRING
 
 required:
   - name
   - namespace
+  - licenseKey

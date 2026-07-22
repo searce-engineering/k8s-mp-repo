@@ -23,3 +23,5 @@ spec:
           env:
             - name: USER_INPUT
               value: "{{ .Values.userInput }}"
+            - name: LICENSE_KEY
+              value: "{{ .Values.licenseKey }}"
