@@ -9,7 +9,7 @@ x-google-marketplace:
     - Feature
     recommended: false
   images:
-    appImage:
+    "":
       properties:
         repository:
           type: FULL
