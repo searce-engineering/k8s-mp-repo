@@ -1,0 +1,3 @@
+properties:
+  licenseKey:
+    default: "test-verification-dummy-key-123"
