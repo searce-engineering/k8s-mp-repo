@@ -6,6 +6,7 @@ docker buildx build \
   --provenance=false \
   --sbom=false \
   --no-cache \
+  --platform linux/amd64 \
   -t app:1.0.0 \
   ./app
 
@@ -17,6 +18,7 @@ docker buildx build \
   --provenance=false \
   --sbom=false \
   --no-cache \
+  --platform linux/amd64 \
   -f deployer/Dockerfile \
   -t deployer:1.0.0 \
   .

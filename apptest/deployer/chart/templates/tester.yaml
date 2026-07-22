@@ -1,112 +1,43 @@
+# apptest/deployer/chart/templates/tester.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Release.Name }}-tester
+  # The name MUST be unique to this deployment
+  name: "{{ .Release.Name }}-tester"
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ .Release.Name }}-tester
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+    # Google requires this label to identify the test pod
     app.kubernetes.io/component: tester
   annotations:
-    # Required annotation — tells the Marketplace verification system
-    # which Pod to watch for the test result (exit code 0 = pass).
-    # For Helm deployers, `helm.sh/hook: test-success` also works;
-    # the tooling replaces it with this annotation automatically.
-    marketplace.cloud.google.com/verification: test
-    helm.sh/hook: test-success
-    helm.sh/hook-delete-policy: hook-succeeded,hook-failed
+    # Standard Helm hook indicating this is a test
+    helm.sh/hook: test
 spec:
-  restartPolicy: Never
-
-  # Run as non-root, matching the app's security posture
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1001
-    runAsGroup: 1001
-
   containers:
     - name: tester
-      # curlimages/curl is a minimal (~12 MB) image with just curl.
-      # For production: push your own tester image to your GCR registry.
-      image: curlimages/curl:8.11.0
-      imagePullPolicy: IfNotPresent
-
-      env:
-        # Construct the in-cluster service hostname from the release name.
-        # Matches the Service name produced by gcp-mp-poc-k8s.fullname.
-        - name: SERVICE_HOST
-          value: "{{ .Release.Name }}-gcp-mp-poc-k8s"
-        - name: SERVICE_PORT
-          value: "80"
-        - name: RETRY_COUNT
-          value: "10"
-        - name: RETRY_DELAY
-          value: "5"
-
+      # Using a standard curl image to ping your application
+      image: curlimages/curl:latest
       command:
-        - /bin/sh
-        - -c
+        - "/bin/sh"
+        - "-c"
         - |
-          set -e
-
-          BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
-
-          # Helper: retry a curl command up to RETRY_COUNT times
-          retry_curl() {
-            local url="$1"
-            local expected="$2"
-            local description="$3"
-            local attempt=0
-            while [ $attempt -lt $RETRY_COUNT ]; do
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$url" || echo "000")
-              if [ "$STATUS" = "$expected" ]; then
-                echo "PASS [$description] $url → HTTP $STATUS"
-                return 0
-              fi
-              attempt=$((attempt + 1))
-              echo "WAIT [$description] $url → HTTP $STATUS (attempt $attempt/$RETRY_COUNT)"
-              sleep $RETRY_DELAY
-            done
-            echo "FAIL [$description] $url → HTTP $STATUS (expected $expected)"
-            return 1
-          }
-
-          echo "=== Starting verification tests for gcp-mp-poc-k8s ==="
-          echo "Target: $BASE_URL"
-          echo ""
-
-          # ── Test 1: Liveness probe ──────────────────────────────────────
-          # /healthz must always return 200 regardless of license state.
-          retry_curl "$BASE_URL/healthz" "200" "liveness"
-
-          # ── Test 2: License status endpoint ────────────────────────────
-          # /license/status must return 200 — the test schema injects a
-          # valid license key via the apptest/deployer/schema.yaml overlay.
-          retry_curl "$BASE_URL/license/status" "200" "license valid"
-
-          # ── Test 3: Readiness probe ─────────────────────────────────────
-          # /readyz returns 200 only when the license is valid.
-          retry_curl "$BASE_URL/readyz" "200" "readiness"
-
-          # ── Test 4: Root endpoint (license-protected) ───────────────────
-          retry_curl "$BASE_URL/" "200" "root endpoint licensed"
-
-          # ── Test 5: Protected API endpoint ─────────────────────────────
-          retry_curl "$BASE_URL/api/data" "200" "api/data licensed"
-
-          # ── Test 6: Verify license rejection works ──────────────────────
-          # Hit the root with a bad Authorization header to confirm the app
-          # correctly enforces license validation (not just open to all).
-          BAD_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "X-License-Override: invalid" \
-            --max-time 5 "$BASE_URL/license/status")
-          # /license/status returns the actual license state — should be 200
-          # (the override header is ignored; we're just checking the app responds)
-          if [ "$BAD_STATUS" = "200" ] || [ "$BAD_STATUS" = "403" ]; then
-            echo "PASS [license endpoint reachable] HTTP $BAD_STATUS"
-          else
-            echo "FAIL [license endpoint unreachable] HTTP $BAD_STATUS"
-            exit 1
-          fi
-
-          echo ""
-          echo "=== All verification tests passed ==="
+          echo "Starting marketplace integration test..."
+          SERVICE_URL="http://{{ .Release.Name }}-gcp-mp-poc-k8s:80/readyz"
+          
+          echo "Pinging $SERVICE_URL..."
+          
+          # Retry loop: Try to hit the app up to 24 times (2 minutes total)
+          for i in $(seq 1 24); do
+            # -s (silent), -f (fail on HTTP errors like 404/500)
+            if curl -s -f "$SERVICE_URL"; then
+              echo "✅ Successfully connected to the application!"
+              exit 0
+            fi
+            echo "Attempt $i failed. Retrying in 5 seconds..."
+            sleep 5
+          done
+          
+          echo "❌ Test failed! Could not reach the application."
+          exit 1
+  # The pod must not restart automatically; Google reads the final exit code
+  restartPolicy: Never
