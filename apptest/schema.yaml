@@ -1,3 +1,6 @@
 properties:
   licenseKey:
+    type: string
     default: "test-verification-dummy-key-123"
+    x-google-marketplace:
+      type: STRING
