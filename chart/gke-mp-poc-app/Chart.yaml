@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gke-mp-poc-app
+description: A Helm Chart for the GKE BYOL Integration Proof of Concept
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
