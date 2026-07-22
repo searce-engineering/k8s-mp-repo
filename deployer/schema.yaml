@@ -4,7 +4,7 @@ x-google-marketplace:
   publishedVersion: "1.0.0"
   publishedVersionMetadata:
     releaseNote: >
-      Initial release of POC product
+      Initial release
     releaseTypes:
       - Feature
     recommended: false
