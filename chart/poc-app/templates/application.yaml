@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.name }}
+  annotations:
+    marketplace.cloud.google.com/deploy-info: '{"partner_id": "searce-cloud-products", "product_id": "mp-poc-k8s", "partner_name": "Searce"}'
 spec:
   selector:
     matchLabels:
