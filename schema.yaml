@@ -12,7 +12,7 @@ x-google-marketplace:
       properties:
         repository:
           type: FULL
-          default: "us-docker.pkg.dev/searce-cloud-products/gcp-mp-k8s-poc-vedant/py-app"
+          default: "us-docker.pkg.dev/searce-cloud-products/gcp-mp-k8s-poc-vedant/app"
         tag:
           type: TAG
           default: "1.0.0"

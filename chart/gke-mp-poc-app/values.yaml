@@ -3,7 +3,7 @@ namespace: default
 licenseKey: "test-key-poc"
 images:
   app:
-    repository: "us-docker.pkg.dev/searce-cloud-products/gcp-mp-k8s-poc-vedant/py-app"
+    repository: "us-docker.pkg.dev/searce-cloud-products/gcp-mp-k8s-poc-vedant/app"
     tag: "1.0.0"
 saas:
   validationUrl: "https://httpbin.org/status/200"
