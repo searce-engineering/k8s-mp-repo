@@ -35,10 +35,14 @@ resources:
     cpu: "500m"
     memory: "256Mi"
 
-# ── BYOL License ──────────────────────────────────────────────────────────────
+# ── Injected dynamically by the Marketplace Deployer ──
+# Do NOT commit real keys here. These match your flattened schema.yaml properties.
+licenseKey: ""
+licenseSecret: ""
+reportingSecret: ""
+
+# ── Static Application Configuration ──
 license:
-  # licenseKey: injected via the Marketplace deployer UI or kubectl secret
-  # Do NOT commit a real key here.
   secretName: "byol-license-secret"
   keyEnvVar:    "LICENSE_KEY"
   secretEnvVar: "LICENSE_SECRET"
