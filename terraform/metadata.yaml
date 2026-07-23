@@ -1,0 +1,82 @@
+apiVersion: blueprints.cloud.google.com/v1alpha1
+kind: BlueprintMetadata
+metadata:
+  name: sample-app---terraform-module
+  annotations:
+    config.kubernetes.io/local-config: "true"
+spec:
+  info:
+    title: Sample App - Terraform Module
+    source:
+      repo: https://github.com/searce-engineering/k8s-mp-repo.git
+      sourceType: git
+      dir: /terraform
+    actuationTool:
+      flavor: Terraform
+      version: ">= 1.4.0"
+    description: {}
+  content:
+    documentation:
+      - title: GKE Marketplace Terraform Integration
+        url: https://cloud.google.com/marketplace/docs/partners/kubernetes-solutions/gke-app-terraform-integration
+  interfaces:
+    variables:
+      - name: project_id
+        description: The GCP project ID where the GKE cluster resides.
+        varType: string
+        required: true
+      - name: cluster_name
+        description: The name of the target GKE cluster.
+        varType: string
+        required: true
+      - name: cluster_location
+        description: The zone or region of the target GKE cluster.
+        varType: string
+        required: true
+      - name: namespace
+        description: The Kubernetes namespace for deployment.
+        varType: string
+        defaultValue: default
+      - name: goog_cm_deployment_name
+        description: The name of the deployment, injected by Google Cloud Marketplace.
+        varType: string
+        defaultValue: sample-app
+      - name: image_repo
+        description: The application container image repository path.
+        varType: string
+        required: true
+      - name: image_tag
+        description: The application container image tag.
+        varType: string
+        required: true
+      - name: helm_chart_name
+        description: The Helm chart container image name.
+        varType: string
+        defaultValue: chart
+      - name: helm_chart_repo
+        description: The Helm chart container image repository path.
+        varType: string
+        required: true
+      - name: helm_chart_version
+        description: The Helm chart container image tag.
+        varType: string
+        required: true
+      - name: license_key
+        description: The license key for the application.
+        varType: string
+        defaultValue: ""
+    outputs:
+      - name: application_name
+        description: The Helm release name of the deployed application.
+      - name: application_namespace
+        description: The Kubernetes namespace where the application is deployed.
+      - name: port_forward_command
+        description: Command to access the application locally.
+  requirements:
+    providerVersions:
+      - source: hashicorp/google
+        version: ">= 5.0.0, < 7.0.0"
+      - source: hashicorp/helm
+        version: ">= 2.0.0, < 3.0.0"
+      - source: hashicorp/kubernetes
+        version: ">= 2.0.0, < 3.0.0"

@@ -1,0 +1,15 @@
+images:
+  py-app:
+    variables:
+      image_repo:
+        type: REPO_WITH_REGISTRY_WITH_NAME
+      image_tag:
+        type: TAG
+  sample-app:
+    variables:
+      helm_chart_name:
+        type: NAME
+      helm_chart_repo:
+        type: REPO_WITH_REGISTRY_WITH_NAME
+      helm_chart_version:
+        type: TAG

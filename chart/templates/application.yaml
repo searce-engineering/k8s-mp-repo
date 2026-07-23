@@ -1,0 +1,25 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+  annotations:
+    marketplace.cloud.google.com/deploy-info: '{"partner_id": "partner", "product_id": "sample-app", "partner_name": "Partner"}'
+spec:
+  descriptor:
+    type: "sample-app"
+    version: "{{ .Values.image.tag }}"
+    description: "GKE Marketplace Terraform POC Sample Application"
+    links:
+      - description: About
+        url: "https://example.com"
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service
